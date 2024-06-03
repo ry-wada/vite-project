@@ -10,12 +10,12 @@ export const ProductCardContainer = styled(Card)(() => ({
 
 export const ProductImage = styled("img")({
   width: "100%",
-  height: "auto",
+  maxHeight: 100,
   objectFit: "cover",
 });
 
 export const WelcomeText = styled(Typography)(({ theme }) => ({
-  margin: theme.spacing(8),
+  margin: theme.spacing(4),
 }));
 
 export const ProductListHeading = styled(Typography)(({ theme }) => ({

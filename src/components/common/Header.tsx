@@ -2,34 +2,38 @@ import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton"; // IconButton を追加
+import IconButton from "@mui/material/IconButton";
 import Popover from "@mui/material/Popover";
 import MenuItem from "@mui/material/MenuItem";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart"; // ショッピングカートのアイコンを追加
-import Badge from "@mui/material/Badge"; // バッジを追加
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import Badge from "@mui/material/Badge";
 import { Button } from "@mui/material";
+import { useAuth } from "../../contexts/AuthContext";
 
-const Header: React.FC = () => {
+export const UserHeader: React.FC = () => {
   const { isLoggedIn, logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   //   const [cartItemCount, setCartItemCount] = useState<number>(0); // カートのアイテム数
   const navigate = useNavigate();
 
+  // マイカートボタンがクリックされたときの処理
   const handleCart = () => {
-    navigate("/myCartPage");
+    navigate("/myCart");
   };
 
+  // ログアウトボタンがクリックされたときの処理
   const handleLogout = () => {
     logout();
     setAnchorEl(null); // ログアウト後、ポップアップを閉じる
   };
 
+  // ポップアップメニューを開く関数
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
+  // ポップアップメニューを閉じる関数
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -84,7 +88,7 @@ const Header: React.FC = () => {
                 </MenuItem>
               </>
             ) : (
-              <MenuItem component={Link} to="/loginPage" onClick={handleClose}>
+              <MenuItem component={Link} to="/userLogin" onClick={handleClose}>
                 ログイン
               </MenuItem>
             )}
@@ -95,4 +99,40 @@ const Header: React.FC = () => {
   );
 };
 
-export default Header;
+export const AdminHeader: React.FC = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/admin");
+  };
+
+  return (
+    <AppBar position="static">
+      <Toolbar style={{ display: "flex", justifyContent: "space-between" }}>
+        <Typography
+          variant="h6"
+          component={Link}
+          to="/admin"
+          style={{ textDecoration: "none", color: "white" }}
+        >
+          管理画面
+        </Typography>
+        <div>
+          <>
+            <Typography
+              variant="body1"
+              style={{ marginRight: 10, color: "white" }}
+            >
+              {"山田花子"} さん
+            </Typography>
+            <Button color="inherit" onClick={handleLogout}>
+              ログアウト
+            </Button>
+          </>
+        </div>
+      </Toolbar>
+    </AppBar>
+  );
+};

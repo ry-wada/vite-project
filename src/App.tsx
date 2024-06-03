@@ -1,12 +1,16 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import HomePage from "./components/HomePage";
-import ProductPage from "./components/ProductPage$id";
 import { ProductProvider } from "./contexts/ProductContext";
-import LoginPage from "./components/LoginPage";
 import { AuthProvider } from "./contexts/AuthContext";
-import MyPage from "./components/MyPage";
-import MyCartPage from "./components/MyCartPage";
+import MyPage from "./components/user/MyPage";
+import UserHome from "./components/user/UserHome";
+import MyCart from "./components/user/MyCart";
+import UserLogin from "./components/user/UserLogin";
+import ProductDetail from "./components/user/ProductDetail";
+import AdminLogin from "./components/admin/AdminLogin";
+import AdminHome from "./components/admin/AdminHome";
+import AdminProductDetail from "./components/admin/AdminProductDetail";
+import AdminAddProduct from "./components/admin/AdminAddProduct";
 
 function App() {
   return (
@@ -14,11 +18,21 @@ function App() {
       <AuthProvider>
         <ProductProvider>
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/productPage/:id" element={<ProductPage />} />ß
-            <Route path="/loginPage" element={<LoginPage />} />
+            {/* ユーザー側のルート */}
+            <Route path="/" element={<UserHome />} />
+            <Route path="/productDetail/:id" element={<ProductDetail />} />
+            <Route path="/userLogin" element={<UserLogin />} />
             <Route path="/myPage" element={<MyPage />} />
-            <Route path="/myCartPage" element={<MyCartPage />} />
+            <Route path="/myCart" element={<MyCart />} />
+
+            {/* 管理者側のルート */}
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/adminHome" element={<AdminHome />} />
+            <Route
+              path="/adminProductDetail/:id"
+              element={<AdminProductDetail />}
+            />
+            <Route path="/adminAddProduct" element={<AdminAddProduct />} />
           </Routes>
         </ProductProvider>
       </AuthProvider>

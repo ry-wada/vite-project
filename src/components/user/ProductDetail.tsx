@@ -2,29 +2,33 @@
 import React, { useContext } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, CardContent, Grid, Button } from "@mui/material";
-import { ProductContext } from "../contexts/ProductContext";
-import Header from "./Header";
-import Footer from "./Footer";
-import { ProductCardContainer, ProductImage } from "../styles";
+import { ProductContext } from "../../contexts/ProductContext";
 
-const ProductPage: React.FC = () => {
+import { ProductCardContainer, ProductImage } from "../../styles";
+import UserFooter from "../common/Footer";
+import { UserHeader } from "../common/Header";
+
+const ProductDetail: React.FC = () => {
   const { id = "" } = useParams<{ id?: string }>();
   const { products } = useContext(ProductContext);
   const product = products.find((p) => p.id === parseInt(id, 10));
 
+  console.log(product);
+
+  // 商品が見つからない場合の処理
   if (!product) {
     return (
       <>
-        <Header />
+        <UserHeader />
         <Typography variant="h6">Product not found</Typography>
-        <Footer />
+        <UserFooter />
       </>
     );
   }
 
   return (
     <>
-      <Header />
+      <UserHeader />
       <Grid container justifyContent="center">
         <Grid item xs={12} sm={8} md={6}>
           <ProductCardContainer style={{ margin: "20px" }}>
@@ -57,9 +61,9 @@ const ProductPage: React.FC = () => {
           </div>
         </Grid>
       </Grid>
-      <Footer />
+      <UserFooter />
     </>
   );
 };
 
-export default ProductPage;
+export default ProductDetail;

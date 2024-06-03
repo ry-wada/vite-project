@@ -1,18 +1,22 @@
 import React, { useState } from "react";
 import { TextField, Button, Typography, Grid } from "@mui/material";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-const LoginPage: React.FC = () => {
+const AdminLogin: React.FC = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
+  // ログインボタンがクリックされたときの処理
   const handleLogin = () => {
     console.log("login button clicked");
     // ログイン処理を行う
     // ここでは簡略化のため、ユーザー名とパスワードが適切であればログインするとする
-    if (email === "email" && password === "password") {
+    if (email === "email" && password === "admin") {
       login();
+      navigate("/adminHome");
     } else {
       // ログイン失敗時の処理
       alert("ログインに失敗しました。");
@@ -28,7 +32,7 @@ const LoginPage: React.FC = () => {
     >
       <div>
         <Typography variant="h5" gutterBottom>
-          ユーザーログイン
+          管理者ログイン
         </Typography>
         <TextField
           label="e-mail"
@@ -53,4 +57,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default AdminLogin;

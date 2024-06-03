@@ -1,38 +1,44 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { Grid, CardContent, Typography } from "@mui/material";
-import { ProductContext } from "../contexts/ProductContext";
-import Header from "./Header";
-import Footer from "./Footer";
+import { Button, Grid, CardContent, Typography } from "@mui/material";
+import { ProductContext } from "../../contexts/ProductContext";
 import {
-  WelcomeText,
-  ProductListHeading,
+  LoadMoreButton,
   ProductCardContainer,
   ProductImage,
-  LoadMoreButton,
-} from "../styles";
+} from "../../styles";
+import { AdminHeader } from "../common/Header";
 
-const HomePage: React.FC = () => {
+const AdminHome: React.FC = () => {
   const { products } = useContext(ProductContext);
   const [visibleProducts, setVisibleProducts] = useState(
     InitialVisibleProducts
   );
 
+  // もっと表示ボタンがクリックされたときに表示する商品数を増やす関数
   const showMoreProducts = () => {
     setVisibleProducts((prevCount) => prevCount + IncrementValue);
   };
 
   return (
     <>
-      <Header />
+      <AdminHeader />
       <div style={{ textAlign: "center", marginBottom: 20 }}>
-        <WelcomeText variant="h4">LH-EC-SHOPへようこそ！！</WelcomeText>
-        <ProductListHeading variant="body1">商品一覧</ProductListHeading>
+        <Typography variant="h4">商品一覧</Typography>
+        <Grid container justifyContent="flex-end" style={{ marginBottom: 20 }}>
+          <Grid item>
+            <Link to="/adminAddProduct" style={{ textDecoration: "none" }}>
+              <Button variant="contained" color="primary">
+                商品新規登録
+              </Button>
+            </Link>
+          </Grid>
+        </Grid>
         <Grid container spacing={2} justifyContent="center">
           {products.slice(0, visibleProducts).map((product) => (
             <Grid item key={product.id} xs={12} sm={6} md={4}>
               <Link
-                to={`/productPage/${product.id}`}
+                to={`/adminProductDetail/${product.id}`}
                 style={{ textDecoration: "none" }}
               >
                 <ProductCardContainer>
@@ -48,6 +54,13 @@ const HomePage: React.FC = () => {
                     >
                       価格: {product.price.toFixed(2)} 円
                     </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      {product.description}
+                    </Typography>
                   </CardContent>
                 </ProductCardContainer>
               </Link>
@@ -60,7 +73,6 @@ const HomePage: React.FC = () => {
           </LoadMoreButton>
         )}
       </div>
-      <Footer />
     </>
   );
 };
@@ -69,4 +81,4 @@ const HomePage: React.FC = () => {
 const InitialVisibleProducts = 6;
 const IncrementValue = 6;
 
-export default HomePage;
+export default AdminHome;

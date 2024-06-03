@@ -3,7 +3,7 @@ import React from "react";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 
-const Footer: React.FC = () => {
+const UserFooter: React.FC = () => {
   return (
     <Toolbar
       style={{
@@ -32,4 +32,4 @@ const Footer: React.FC = () => {
   );
 };
 
-export default Footer;
+export default UserFooter;

@@ -1,9 +1,9 @@
 // MyPage.tsx
 
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
 import { Container, Typography, Card, CardContent, Grid } from "@mui/material";
+import UserFooter from "../common/Footer";
+import { UserHeader } from "../common/Header";
 
 const MyPage: React.FC = () => {
   // 仮のユーザーデータ
@@ -14,7 +14,7 @@ const MyPage: React.FC = () => {
 
   return (
     <>
-      <Header />
+      <UserHeader />
       <Container>
         <Typography
           variant="h5"
@@ -50,7 +50,7 @@ const MyPage: React.FC = () => {
           </Grid>
         </Grid>
       </Container>
-      <Footer />
+      <UserFooter />
     </>
   );
 };

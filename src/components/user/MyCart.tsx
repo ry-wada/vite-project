@@ -1,16 +1,18 @@
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
+
 import {
   Container,
   Typography,
   Card,
   CardContent,
   Grid,
-  Button, // IconButtonからButtonに変更
+  Button,
   CardMedia,
 } from "@mui/material";
+import UserFooter from "../common/Footer";
+import { UserHeader } from "../common/Header";
 
+// カートアイテムの型定義
 interface CartItem {
   id: number;
   name: string;
@@ -18,7 +20,7 @@ interface CartItem {
   image: string;
 }
 
-const MyCartPage: React.FC = () => {
+const MyCart: React.FC = () => {
   // 仮のカートアイテムデータ
   const cartItems: CartItem[] = [
     {
@@ -48,7 +50,7 @@ const MyCartPage: React.FC = () => {
 
   return (
     <>
-      <Header />
+      <UserHeader />
       <Container>
         <Typography variant="h3" align="center" gutterBottom>
           カート一覧
@@ -79,7 +81,7 @@ const MyCartPage: React.FC = () => {
                 <Grid item xs={2}>
                   <Button
                     variant="contained"
-                    color="error" // 赤色の削除ボタンにする
+                    color="error"
                     style={{ marginLeft: "auto" }}
                     onClick={() => removeFromCart(item.id)}
                   >
@@ -91,9 +93,9 @@ const MyCartPage: React.FC = () => {
           </Card>
         ))}
       </Container>
-      <Footer />
+      <UserFooter />
     </>
   );
 };
 
-export default MyCartPage;
+export default MyCart;
