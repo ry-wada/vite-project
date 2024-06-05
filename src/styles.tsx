@@ -14,8 +14,9 @@ export const ProductImage = styled("img")({
   objectFit: "cover",
 });
 
-export const WelcomeText = styled(Typography)(({ theme }) => ({
+export const BodyText = styled(Typography)(({ theme }) => ({
   margin: theme.spacing(4),
+  textAlign: "center",
 }));
 
 export const ProductListHeading = styled(Typography)(({ theme }) => ({
@@ -39,4 +40,12 @@ export const ProductCard = styled(Card)({
 export const addToCartButton = styled(Button)({
   margin: "20px",
   textAlign: "right",
+});
+
+export const HeaderSpace = styled("div")({
+  marginTop: "64px",
+  textAlign: "center",
+  marginBottom: 20,
+  maxHeight: "calc(100vh - 40px)",
+  overflowY: "auto",
 });

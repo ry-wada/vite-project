@@ -1,39 +1,57 @@
-// ProductPage.tsx
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, CardContent, Grid, Button } from "@mui/material";
-import { ProductContext } from "../../contexts/ProductContext";
-
-import { ProductCardContainer, ProductImage } from "../../styles";
+import { HeaderSpace, ProductCardContainer, ProductImage } from "../../styles";
 import UserFooter from "../common/Footer";
 import { UserHeader } from "../common/Header";
+import { CartContext } from "../../contexts/CartContext";
+import { Product } from "../../contexts/ProductContext";
 
 const ProductDetail: React.FC = () => {
   const { id = "" } = useParams<{ id?: string }>();
-  const { products } = useContext(ProductContext);
-  const product = products.find((p) => p.id === parseInt(id, 10));
+  const [product, setProduct] = useState<Product | null>(null);
+  const { addToCart } = useContext(CartContext);
 
-  console.log(product);
+  useEffect(() => {
+    const fetchProductDetail = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/items/${id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch product details");
+        }
+        const data = await response.json();
+        setProduct(data);
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+      }
+    };
+    fetchProductDetail();
+  }, [id]);
 
-  // 商品が見つからない場合の処理
   if (!product) {
     return (
       <>
         <UserHeader />
-        <Typography variant="h6">Product not found</Typography>
+        <Typography variant="h6">商品が見つかりませんでした...</Typography>
         <UserFooter />
       </>
     );
   }
 
+  console.log(product);
+
   return (
     <>
       <UserHeader />
+      <HeaderSpace />
       <Grid container justifyContent="center">
         <Grid item xs={12} sm={8} md={6}>
           <ProductCardContainer style={{ margin: "20px" }}>
-            <ProductImage src={product.imageUrl} alt={product.name} />
             <CardContent style={{ textAlign: "center" }}>
+              <ProductImage
+                src={`src/picture/image${product.id}.jpg`}
+                alt={product.name}
+              />
               <Typography variant="h4" component="h1">
                 {product.name}
               </Typography>
@@ -42,20 +60,23 @@ const ProductDetail: React.FC = () => {
                 color="textSecondary"
                 component="p"
               >
-                価格: {product.price.toFixed(2)} 円
+                価格: {product.price} 円
               </Typography>
               <Typography
                 variant="body1"
                 component="p"
                 style={{ margin: "20px" }}
               >
-                {product.description}
+                {product.content}
               </Typography>
             </CardContent>
           </ProductCardContainer>
           <div style={{ textAlign: "right", margin: "20px" }}>
-            {/* addToCartButtonスタイルを適用したButtonコンポーネント */}
-            <Button variant="contained" color="primary">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => addToCart(product)}
+            >
               カートに追加
             </Button>
           </div>

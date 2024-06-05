@@ -1,29 +1,20 @@
-// MyPage.tsx
-
 import React from "react";
 import { Container, Typography, Card, CardContent, Grid } from "@mui/material";
 import UserFooter from "../common/Footer";
 import { UserHeader } from "../common/Header";
+import { BodyText, HeaderSpace } from "../../styles";
+import { useAuth } from "../../contexts/AuthContext";
 
 const MyPage: React.FC = () => {
-  // 仮のユーザーデータ
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
-  };
+  const { user } = useAuth(); // ユーザー情報を取得
+  console.log(user);
 
   return (
     <>
       <UserHeader />
+      <HeaderSpace />
       <Container>
-        <Typography
-          variant="h5"
-          align="center"
-          style={{ marginTop: "20px" }}
-          gutterBottom
-        >
-          マイページ
-        </Typography>
+        <BodyText>マイページ</BodyText>
         <Grid container justifyContent="center">
           <Grid item xs={12} sm={6}>
             <Card>
@@ -32,7 +23,7 @@ const MyPage: React.FC = () => {
                   名前:
                 </Typography>
                 <Typography variant="body1" align="center">
-                  {user.name}
+                  山田花子{/* DBにないのでとりあえず */}
                 </Typography>
                 <Typography
                   variant="h5"
@@ -43,7 +34,7 @@ const MyPage: React.FC = () => {
                   メールアドレス:
                 </Typography>
                 <Typography variant="body1" align="center">
-                  {user.email}
+                  {user?.email} {/* メールアドレスを表示 */}
                 </Typography>
               </CardContent>
             </Card>

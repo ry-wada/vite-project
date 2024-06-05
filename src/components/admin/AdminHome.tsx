@@ -8,23 +8,24 @@ import {
   ProductImage,
 } from "../../styles";
 import { AdminHeader } from "../common/Header";
+import { 初期表示数, 追加表示数 } from "../common/constants";
 
 const AdminHome: React.FC = () => {
   const { products } = useContext(ProductContext);
-  const [visibleProducts, setVisibleProducts] = useState(
-    InitialVisibleProducts
-  );
+  const [visibleProducts, setVisibleProducts] = useState(初期表示数);
 
   // もっと表示ボタンがクリックされたときに表示する商品数を増やす関数
   const showMoreProducts = () => {
-    setVisibleProducts((prevCount) => prevCount + IncrementValue);
+    setVisibleProducts((prevCount) => prevCount + 追加表示数);
   };
 
   return (
     <>
       <AdminHeader />
-      <div style={{ textAlign: "center", marginBottom: 20 }}>
-        <Typography variant="h4">商品一覧</Typography>
+      <div style={{ marginTop: "64px", textAlign: "center", marginBottom: 20 }}>
+        <Typography marginTop="100px" variant="h4">
+          商品一覧
+        </Typography>
         <Grid container justifyContent="flex-end" style={{ marginBottom: 20 }}>
           <Grid item>
             <Link to="/adminAddProduct" style={{ textDecoration: "none" }}>
@@ -76,9 +77,5 @@ const AdminHome: React.FC = () => {
     </>
   );
 };
-
-// 初期表示数と増加値を定数として定義する
-const InitialVisibleProducts = 6;
-const IncrementValue = 6;
 
 export default AdminHome;

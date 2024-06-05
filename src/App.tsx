@@ -11,29 +11,36 @@ import AdminLogin from "./components/admin/AdminLogin";
 import AdminHome from "./components/admin/AdminHome";
 import AdminProductDetail from "./components/admin/AdminProductDetail";
 import AdminAddProduct from "./components/admin/AdminAddProduct";
+import NotFoundPage from "./components/common/NotFoundPage";
+import { CartProvider } from "./contexts/CartContext";
 
 function App() {
   return (
     <Router>
       <AuthProvider>
         <ProductProvider>
-          <Routes>
-            {/* ユーザー側のルート */}
-            <Route path="/" element={<UserHome />} />
-            <Route path="/productDetail/:id" element={<ProductDetail />} />
-            <Route path="/userLogin" element={<UserLogin />} />
-            <Route path="/myPage" element={<MyPage />} />
-            <Route path="/myCart" element={<MyCart />} />
+          <CartProvider>
+            <Routes>
+              {/* ユーザー側のルート */}
+              <Route path="/" element={<UserHome />} />
+              <Route path="/productDetail/:id" element={<ProductDetail />} />
+              <Route path="/userLogin" element={<UserLogin />} />
+              <Route path="/myPage" element={<MyPage />} />
+              <Route path="/myCart" element={<MyCart />} />
 
-            {/* 管理者側のルート */}
-            <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/adminHome" element={<AdminHome />} />
-            <Route
-              path="/adminProductDetail/:id"
-              element={<AdminProductDetail />}
-            />
-            <Route path="/adminAddProduct" element={<AdminAddProduct />} />
-          </Routes>
+              {/* 管理者側のルート */}
+              <Route path="/admin" element={<AdminLogin />} />
+              <Route path="/adminHome" element={<AdminHome />} />
+              <Route
+                path="/adminProductDetail/:id"
+                element={<AdminProductDetail />}
+              />
+              <Route path="/adminAddProduct" element={<AdminAddProduct />} />
+
+              {/* 404 ページ */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </CartProvider>
         </ProductProvider>
       </AuthProvider>
     </Router>
