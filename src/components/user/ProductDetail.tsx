@@ -6,6 +6,7 @@ import UserFooter from "../common/Footer";
 import { UserHeader } from "../common/Header";
 import { CartContext } from "../../contexts/CartContext";
 import { Product } from "../../contexts/ProductContext";
+import { APIパス, IMAGEパス } from "../common/constants";
 
 const ProductDetail: React.FC = () => {
   const { id = "" } = useParams<{ id?: string }>();
@@ -15,7 +16,7 @@ const ProductDetail: React.FC = () => {
   useEffect(() => {
     const fetchProductDetail = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/items/${id}`);
+        const response = await fetch(`${APIパス}/items/${id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch product details");
         }
@@ -38,8 +39,6 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  console.log(product);
-
   return (
     <>
       <UserHeader />
@@ -49,7 +48,7 @@ const ProductDetail: React.FC = () => {
           <ProductCardContainer style={{ margin: "20px" }}>
             <CardContent style={{ textAlign: "center" }}>
               <ProductImage
-                src={`src/picture/image${product.id}.jpg`}
+                src={`${IMAGEパス}${product.id}.jpg`}
                 alt={product.name}
               />
               <Typography variant="h4" component="h1">

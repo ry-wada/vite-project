@@ -1,28 +1,54 @@
 import React, { useState } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
+import { Product } from "../../contexts/ProductContext";
+import { APIパス } from "../common/constants";
+import { useAuth } from "../../contexts/AuthContext"; // AuthContextをインポート
 
 // 商品編集モーダル
 interface EditProductModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (productData: any) => void;
-  productData: any; // 商品データ
+  productData: Product; // 商品データ
 }
 
 const EditProductModal: React.FC<EditProductModalProps> = ({
   open,
   onClose,
-  onSave,
   productData,
 }) => {
+  const { token } = useAuth(); // トークンを取得
   const [editedProductData, setEditedProductData] = useState(productData);
   const [updateSuccess, setUpdateSuccess] = useState(false); // 更新成功のフラグ
 
   // 保存処理
-  const handleSave = () => {
-    onSave(editedProductData);
-    setUpdateSuccess(true); // 更新成功のフラグをtrueに設定
-    onClose();
+  const handleSave = async () => {
+    try {
+      const updatedProductData = {
+        name: editedProductData.name,
+        price: editedProductData.price,
+        content: editedProductData.content,
+      };
+
+      console.log("updatedProductData", updatedProductData);
+
+      const response = await fetch(`${APIパス}/items/${productData.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+          Authorization: `Bearer ${token}`, // トークンを追加
+        },
+        body: JSON.stringify(updatedProductData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update product");
+      }
+
+      setUpdateSuccess(true); // 更新成功のフラグをtrueに設定
+    } catch (error) {
+      console.error("Error updating product:", error);
+    }
   };
 
   // フォームの入力値を更新する関数
@@ -34,10 +60,16 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     });
   };
 
+  // モーダルを閉じるときに updateSuccess をリセット
+  const handleClose = () => {
+    setUpdateSuccess(false);
+    onClose();
+  };
+
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -62,7 +94,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
               fullWidth
               label="商品名"
               name="name"
-              value={editedProductData.name}
+              defaultValue={editedProductData.name}
               onChange={handleChange}
               sx={{ mt: 2 }}
             />
@@ -71,27 +103,35 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
               label="価格"
               name="price"
               type="number"
-              value={editedProductData.price}
+              defaultValue={editedProductData.price}
               onChange={handleChange}
               sx={{ mt: 2 }}
             />
             <TextField
               fullWidth
               label="説明"
-              name="description"
-              value={editedProductData.description}
+              name="content"
+              defaultValue={editedProductData.content}
               onChange={handleChange}
               sx={{ mt: 2 }}
             />
           </>
         )}
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-          <Button variant="contained" onClick={handleSave}>
-            保存
-          </Button>
-          <Button variant="contained" onClick={onClose} sx={{ ml: 2 }}>
-            キャンセル
-          </Button>
+          {!updateSuccess ? (
+            <>
+              <Button variant="contained" onClick={handleSave}>
+                保存
+              </Button>
+              <Button variant="contained" onClick={handleClose} sx={{ ml: 2 }}>
+                キャンセル
+              </Button>
+            </>
+          ) : (
+            <Button variant="contained" onClick={handleClose}>
+              閉じる
+            </Button>
+          )}
         </Box>
       </Box>
     </Modal>

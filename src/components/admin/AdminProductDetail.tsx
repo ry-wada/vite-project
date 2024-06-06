@@ -1,19 +1,34 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, CardContent, Grid, Button } from "@mui/material";
-import { ProductContext } from "../../contexts/ProductContext";
-import { ProductCardContainer, ProductImage } from "../../styles";
+import { Product } from "../../contexts/ProductContext";
+import { APIパス } from "../common/constants";
+import { HeaderSpace, ProductCardContainer } from "../../styles";
 import { AdminHeader } from "../common/Header";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import EditProductModal from "./EditProductModal"; // 商品編集モーダルをインポート
 
-const ProductDetail: React.FC = () => {
+const AdminProductDetail: React.FC = () => {
   const { id = "" } = useParams<{ id?: string }>();
-  const { products } = useContext(ProductContext);
-  const product = products.find((p) => p.id === parseInt(id, 10));
-
+  const [product, setProduct] = useState<Product | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false); // 削除モーダルの開閉状態
   const [openEditModal, setOpenEditModal] = useState(false); // 編集モーダルの開閉状態
+
+  useEffect(() => {
+    const fetchProductDetail = async () => {
+      try {
+        const response = await fetch(`${APIパス}/items/${id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch product details");
+        }
+        const data = await response.json();
+        setProduct(data);
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+      }
+    };
+    fetchProductDetail();
+  }, [id]);
 
   // 削除モーダルを開く関数
   const handleOpenDeleteModal = () => {
@@ -39,29 +54,18 @@ const ProductDetail: React.FC = () => {
     return (
       <>
         <AdminHeader />
-        <Typography variant="h6">Product not found</Typography>
+        <Typography variant="h6">商品が見つかりませんでした...</Typography>
       </>
     );
   }
 
-  // 商品削除処理
-  const handleDelete = () => {
-    // deleteProduct(product.id);
-    handleCloseDeleteModal();
-  };
-
-  // 商品編集処理
-  const handleEdit = () => {
-    // 商品編集ページへ遷移する処理
-  };
-
   return (
     <>
       <AdminHeader />
+      <HeaderSpace />
       <Grid container justifyContent="center">
         <Grid item xs={12} sm={8} md={6}>
           <ProductCardContainer style={{ margin: "20px" }}>
-            <ProductImage src={product.imageUrl} alt={product.name} />
             <CardContent style={{ textAlign: "center" }}>
               <Typography variant="h4" component="h1">
                 {product.name}
@@ -71,14 +75,14 @@ const ProductDetail: React.FC = () => {
                 color="textSecondary"
                 component="p"
               >
-                価格: {product.price.toFixed(2)} 円
+                価格: {product.price} 円
               </Typography>
               <Typography
                 variant="body1"
                 component="p"
                 style={{ margin: "20px" }}
               >
-                {product.description}
+                {product.content}
               </Typography>
             </CardContent>
           </ProductCardContainer>
@@ -105,17 +109,16 @@ const ProductDetail: React.FC = () => {
       <DeleteConfirmationModal
         open={openDeleteModal}
         onClose={handleCloseDeleteModal}
-        onDelete={handleDelete}
+        productData={product} // 削除モーダルに表示する商品データを渡す
       />
 
       <EditProductModal
         open={openEditModal}
         onClose={handleCloseEditModal}
-        onSave={handleEdit} // 保存ボタンがクリックされた時の処理を指定する
         productData={product} // 編集モーダルに表示する商品データを渡す
       />
     </>
   );
 };
 
-export default ProductDetail;
+export default AdminProductDetail;

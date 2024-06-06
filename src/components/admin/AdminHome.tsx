@@ -1,22 +1,50 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button, Grid, CardContent, Typography } from "@mui/material";
 import { ProductContext } from "../../contexts/ProductContext";
-import {
-  LoadMoreButton,
-  ProductCardContainer,
-  ProductImage,
-} from "../../styles";
+import { LoadMoreButton, ProductCardContainer } from "../../styles";
 import { AdminHeader } from "../common/Header";
-import { 初期表示数, 追加表示数 } from "../common/constants";
+import { APIパス, 初期表示数, 追加表示数 } from "../common/constants";
 
 const AdminHome: React.FC = () => {
-  const { products } = useContext(ProductContext);
+  const { products, setProducts } = useContext(ProductContext);
   const [visibleProducts, setVisibleProducts] = useState(初期表示数);
+  const [page, setPage] = useState(1);
 
-  // もっと表示ボタンがクリックされたときに表示する商品数を増やす関数
-  const showMoreProducts = () => {
-    setVisibleProducts((prevCount) => prevCount + 追加表示数);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(
+          `${APIパス}/items?limit=${初期表示数}&page=1`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const data = await response.json();
+        setProducts(data.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchProducts();
+  }, [setProducts]);
+
+  const showMoreProducts = async () => {
+    try {
+      const nextPage = page + 1;
+      const response = await fetch(
+        `${APIパス}/items?limit=${追加表示数}&page=${nextPage}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch more products");
+      }
+      const data = await response.json();
+      setProducts((prevProducts) => [...prevProducts, ...data.data]);
+      setPage(nextPage);
+      setVisibleProducts((prevCount) => prevCount + 追加表示数);
+    } catch (error) {
+      console.error("Error fetching more products:", error);
+    }
   };
 
   return (
@@ -35,15 +63,14 @@ const AdminHome: React.FC = () => {
             </Link>
           </Grid>
         </Grid>
-        <Grid container spacing={2} justifyContent="center">
+        <Grid container justifyContent="center">
           {products.slice(0, visibleProducts).map((product) => (
-            <Grid item key={product.id} xs={12} sm={6} md={4}>
+            <Grid item key={product.id} xs={12} style={{ marginBottom: 20 }}>
               <Link
                 to={`/adminProductDetail/${product.id}`}
                 style={{ textDecoration: "none" }}
               >
                 <ProductCardContainer>
-                  <ProductImage src={product.imageUrl} alt={product.name} />
                   <CardContent style={{ textAlign: "center" }}>
                     <Typography variant="h6" component="h2">
                       {product.name}
@@ -53,14 +80,14 @@ const AdminHome: React.FC = () => {
                       color="textSecondary"
                       component="p"
                     >
-                      価格: {product.price.toFixed(2)} 円
+                      価格: {product.price} 円
                     </Typography>
                     <Typography
                       variant="body2"
                       color="textSecondary"
                       component="p"
                     >
-                      {product.description}
+                      {product.content}
                     </Typography>
                   </CardContent>
                 </ProductCardContainer>

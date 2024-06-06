@@ -9,7 +9,7 @@ const UserLogin: React.FC = () => {
 
   // ログインボタンがクリックされたときの処理
   const handleLogin = async () => {
-    login(email, password);
+    login(email, password, false);
   };
 
   return (

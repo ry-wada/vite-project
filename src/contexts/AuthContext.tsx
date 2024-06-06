@@ -1,6 +1,13 @@
 import { z } from "zod";
-import React, { ReactNode, createContext, useContext, useState } from "react";
+import React, {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
+import { APIパス } from "../components/common/constants";
 
 // ユーザー情報のスキーマ定義（仮）
 const UserSchema = z.object({
@@ -15,8 +22,12 @@ type User = z.infer<typeof UserSchema>;
 const AuthStateSchema = z.object({
   isLoggedIn: z.boolean(),
   user: UserSchema.nullable(),
-  login: z.function(z.tuple([z.string(), z.string()]), z.promise(z.unknown())),
-  logout: z.function(),
+  login: z.function(
+    z.tuple([z.string(), z.string(), z.boolean()]),
+    z.promise(z.unknown())
+  ),
+  logout: z.function(z.tuple([z.boolean()]), z.promise(z.unknown())),
+  token: z.string(),
 });
 
 // ログイン状態の型定義
@@ -26,12 +37,25 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// ローカルストレージのキー
+const LOCAL_STORAGE_KEY = "auth";
+
+// ローカルストレージからログイン情報を読み込む関数
+const loadAuthStateFromLocalStorage = () => {
+  const authStateJSON = localStorage.getItem(LOCAL_STORAGE_KEY);
+  if (authStateJSON) {
+    return JSON.parse(authStateJSON);
+  }
+  return null;
+};
+
 // デフォルト値を含む AuthContext の作成
 const AuthContext = createContext<AuthState>({
   isLoggedIn: false,
   user: null,
   login: async () => {},
-  logout: () => {},
+  logout: async () => {},
+  token: "",
 });
 
 // ログインプロバイダーのコンポーネント
@@ -41,17 +65,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string>(""); // トークンの状態を管理する
   const navigate = useNavigate();
 
-  // ログイン関数の例
-  const login = async (email: string, password: string) => {
+  useEffect(() => {
+    // ページ読み込み時にローカルストレージからログイン情報を読み込む
+    const authState = loadAuthStateFromLocalStorage();
+    if (authState && authState.isLoggedIn) {
+      setIsLoggedIn(true);
+      setUser(authState.user);
+      setToken(authState.token);
+    }
+  }, []);
+
+  // ログイン関数（引数でユーザーと管理者を判別）
+  const login = async (email: string, password: string, admin: boolean) => {
+    let response;
     try {
-      // バックエンドの認証サービスと通信してログインを試みる
-      const response = await fetch("http://localhost:8080/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      switch (admin) {
+        case true:
+          // バックエンドの認証サービスと通信してログインを試みる
+          response = await fetch(`${APIパス}/auth/admin/signin`, {
+            method: "POST",
+            headers: {
+              accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+          break;
+        case false:
+          // バックエンドの認証サービスと通信してログインを試みる
+          response = await fetch(`${APIパス}/auth/signin`, {
+            method: "POST",
+            headers: {
+              accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+          break;
+      }
 
       // レスポンスが正常でない場合はエラーをスローする
       if (!response.ok) {
@@ -60,15 +111,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // レスポンスデータを取得する
       const data = await response.json();
-
       const { token } = data;
 
       // トークンをセットする
       setToken(token);
-      console.log("token", token);
 
       // ユーザー情報を取得するAPIにアクセスしてユーザー情報を取得する
-      const userResponse = await fetch("http://localhost:8080/api/my/user", {
+      const userResponse = await fetch(`${APIパス}/my/user`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`, // トークンを使って認証
@@ -86,9 +135,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // ログイン成功時の処理
       setIsLoggedIn(true);
       setUser(userData); // ユーザー情報をセットする
+      localStorage.setItem(
+        LOCAL_STORAGE_KEY,
+        JSON.stringify({ isLoggedIn: true, user: userData, token })
+      );
 
       // ログイン後のリダイレクト
-      navigate("/");
+      switch (admin) {
+        case true:
+          navigate("/adminHome");
+          break;
+        case false:
+          navigate("/");
+          break;
+      }
     } catch (error) {
       // ログイン失敗時の処理
       console.error("Login error:", error);
@@ -97,10 +157,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // ログアウト関数
-  const logout = async () => {
+  const logout = async (admin: boolean) => {
     try {
       // バックエンドのログアウトエンドポイントにアクセスしてログアウトする
-      const response = await fetch("http://localhost:8080/api/auth/signout", {
+      const response = await fetch(`${APIパス}/auth/signout`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`, // トークンを使って認証
@@ -116,6 +176,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoggedIn(false);
       setUser(null); // ユーザー情報を削除する
       setToken(""); // トークンを削除する
+      alert("ログアウトしました。");
+
+      switch (admin) {
+        case true:
+          navigate("/admin");
+          break;
+        case false:
+          navigate("/");
+          break;
+      }
     } catch (error) {
       // ログアウト失敗時の処理
       console.error("Logout error:", error);
@@ -124,10 +194,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // AuthState を検証し、エラーがあればコンソールに出力する
-  AuthStateSchema.parse({ isLoggedIn, user, login, logout });
+  AuthStateSchema.parse({ isLoggedIn, user, login, logout, token });
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, login, logout, token }}>
       {children}
     </AuthContext.Provider>
   );

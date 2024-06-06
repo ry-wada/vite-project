@@ -1,24 +1,43 @@
 import React, { useState } from "react";
 import { Modal, Box, Typography, Button } from "@mui/material";
+import { APIパス } from "../common/constants";
+import { useAuth } from "../../contexts/AuthContext"; // AuthContextをインポート
 
 // 削除確認モーダル
 interface DeleteConfirmationModalProps {
   open: boolean;
   onClose: () => void;
-  onDelete: () => void;
+  productId: string; // 削除する商品のID
 }
 
 const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   open,
   onClose,
-  onDelete,
+  productId,
 }) => {
+  const { token } = useAuth(); // トークンを取得
   const [deleted, setDeleted] = useState(false);
 
   // 削除処理
-  const handleDelete = () => {
-    onDelete();
-    setDeleted(true);
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`${APIパス}/items/${productId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+          Authorization: `Bearer ${token}`, // トークンを追加
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete product");
+      }
+
+      setDeleted(true);
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
   };
 
   // モーダルを閉じる処理
@@ -55,7 +74,8 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
           {!deleted && (
-            <Button variant="contained" color="error" onClick={handleDelete}>
+            // とりあえず閉じるだけ
+            <Button variant="contained" color="error" onClick={handleClose}>
               削除する
             </Button>
           )}

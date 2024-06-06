@@ -11,6 +11,7 @@ import UserFooter from "../common/Footer";
 import { UserHeader } from "../common/Header";
 import { CartContext } from "../../contexts/CartContext";
 import { BodyText, HeaderSpace, ProductImage } from "../../styles";
+import { IMAGEパス } from "../common/constants";
 
 const MyCart: React.FC = () => {
   const { cartItems, removeFromCart } = useContext(CartContext);
@@ -26,7 +27,7 @@ const MyCart: React.FC = () => {
     <>
       <UserHeader />
       <HeaderSpace />
-      <Container>
+      <Container style={{ marginBottom: "120px" }}>
         <BodyText>カート一覧</BodyText>
         <Grid container justifyContent="flex-end" style={{ marginTop: "20px" }}>
           <Typography variant="h6">
@@ -39,7 +40,7 @@ const MyCart: React.FC = () => {
               <Grid container>
                 <Grid item xs={6}>
                   <ProductImage
-                    src={`src/picture/image${item.id}.jpg`}
+                    src={`${IMAGEパス}${item.id}.jpg`}
                     alt={item.name}
                   />
                   <Typography variant="h5" gutterBottom>

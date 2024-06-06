@@ -23,8 +23,8 @@ export const UserHeader: React.FC = () => {
   };
 
   const handleLogout = () => {
-    logout();
     setAnchorEl(null);
+    logout(false);
   };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -92,11 +92,10 @@ export const UserHeader: React.FC = () => {
 };
 
 export const AdminHeader: React.FC = () => {
-  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
-    logout();
-    navigate("/admin");
+    logout(true);
   };
 
   return (
@@ -105,7 +104,7 @@ export const AdminHeader: React.FC = () => {
         <Typography
           variant="h6"
           component={Link}
-          to="/admin"
+          to="/adminHome"
           style={{ textDecoration: "none", color: "white" }}
         >
           管理画面

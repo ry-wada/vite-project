@@ -7,7 +7,6 @@ import { useAuth } from "../../contexts/AuthContext";
 
 const MyPage: React.FC = () => {
   const { user } = useAuth(); // ユーザー情報を取得
-  console.log(user);
 
   return (
     <>
