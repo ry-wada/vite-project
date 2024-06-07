@@ -1,34 +1,42 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Typography, CardContent, Grid, Button } from "@mui/material";
 import { Product } from "../../contexts/ProductContext";
 import { APIパス } from "../common/constants";
 import { HeaderSpace, ProductCardContainer } from "../../styles";
 import { AdminHeader } from "../common/Header";
-import DeleteConfirmationModal from "./DeleteConfirmationModal";
-import EditProductModal from "./EditProductModal"; // 商品編集モーダルをインポート
+import EditProductModal from "./EditProductModal";
+import DeleteProductModal from "./DeleteProductModal";
 
 const AdminProductDetail: React.FC = () => {
   const { id = "" } = useParams<{ id?: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false); // 削除モーダルの開閉状態
   const [openEditModal, setOpenEditModal] = useState(false); // 編集モーダルの開閉状態
+  const auth = localStorage.getItem("auth");
+  const navigate = useNavigate();
+
+  // 商品詳細を取得する関数
+  const fetchProductDetail = useCallback(async () => {
+    try {
+      const response = await fetch(`${APIパス}/items/${id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch product details");
+      }
+      const data = await response.json();
+      setProduct(data);
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+    }
+  }, [id]);
 
   useEffect(() => {
-    const fetchProductDetail = async () => {
-      try {
-        const response = await fetch(`${APIパス}/items/${id}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch product details");
-        }
-        const data = await response.json();
-        setProduct(data);
-      } catch (error) {
-        console.error("Error fetching product details:", error);
-      }
-    };
+    // ログインしていない場合は/adminにリダイレクト
+    if (!auth) {
+      navigate("/admin");
+    }
     fetchProductDetail();
-  }, [id]);
+  }, [id, auth, navigate, fetchProductDetail]);
 
   // 削除モーダルを開く関数
   const handleOpenDeleteModal = () => {
@@ -106,15 +114,16 @@ const AdminProductDetail: React.FC = () => {
         </Grid>
       </Grid>
 
-      <DeleteConfirmationModal
+      <DeleteProductModal
         open={openDeleteModal}
         onClose={handleCloseDeleteModal}
-        productData={product} // 削除モーダルに表示する商品データを渡す
+        productId={product.id} // 削除モーダルに表示する商品データを渡す
       />
 
       <EditProductModal
         open={openEditModal}
         onClose={handleCloseEditModal}
+        onUpdated={fetchProductDetail} // 編集モーダルが閉じた後にデータを再取得
         productData={product} // 編集モーダルに表示する商品データを渡す
       />
     </>

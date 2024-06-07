@@ -1,13 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Typography, Grid, TextField } from "@mui/material";
 import { AdminHeader } from "../common/Header";
-import AddConfimationModal from "./AddConfirmationModal";
+import { APIパス } from "../common/constants";
+import { useAuth } from "../../contexts/AuthContext";
+import AddProductModal from "./AddProductModal";
+import { useNavigate } from "react-router-dom";
 
 const AdminAddProduct: React.FC = () => {
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [successModalOpen, setSuccessModalOpen] = useState(false); // 成功モーダルの表示状態
+  const [isSuccess, setIsSuccess] = useState<boolean | null>(null); // API通信の結果を保存する状態
+  const [error, setError] = useState(""); // エラーメッセージの状態
+  const { token } = useAuth();
+  const navigate = useNavigate();
+  const auth = localStorage.getItem("auth");
 
   // 商品名の入力値が変更されたときの処理
   const handleProductNameChange = (
@@ -28,12 +36,54 @@ const AdminAddProduct: React.FC = () => {
     setDescription(event.target.value);
   };
 
+  useEffect(() => {
+    // ログインしていない場合は/adminにリダイレクト
+    if (!auth) {
+      navigate("/admin");
+    }
+  }, [auth, navigate]);
+
   // 商品新規登録ボタンがクリックされたときの処理
-  const handleSave = () => {
-    // 保存処理を実行する
-    console.log("商品が保存されました:", productName, price, description);
-    // 成功モーダルを表示する
-    setSuccessModalOpen(true);
+  const handleSave = async () => {
+    // 全ての項目が入力されているかをチェック
+    if (!productName || !price || !description) {
+      setError("全ての項目を入力してください");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${APIパス}/items`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+          Authorization: `Bearer ${token}`, // トークンを追加
+        },
+        body: JSON.stringify({
+          name: productName,
+          price: Number(price),
+          content: description,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save product");
+      }
+
+      console.log("商品が保存されました:", response);
+      setIsSuccess(true); // 成功を設定
+      setSuccessModalOpen(true); // 成功モーダルを表示する
+
+      // フォームのリセット
+      setProductName("");
+      setPrice("");
+      setDescription("");
+      setError(""); // エラーメッセージをクリア
+    } catch (error) {
+      console.error("Error saving product:", error);
+      setIsSuccess(false); // 失敗を設定
+      setSuccessModalOpen(true); // 失敗モーダルを表示する
+    }
   };
 
   return (
@@ -69,6 +119,7 @@ const AdminAddProduct: React.FC = () => {
               multiline
               rows={4}
             />
+            {error && <Typography color="error">{error}</Typography>}
             <Button
               variant="contained"
               color="primary"
@@ -79,10 +130,10 @@ const AdminAddProduct: React.FC = () => {
             </Button>
           </Grid>
         </Grid>
-        {/* 成功モーダル */}
-        <AddConfimationModal
+        <AddProductModal
           open={successModalOpen}
           onClose={() => setSuccessModalOpen(false)}
+          isSuccess={isSuccess} // 成功か失敗かの状態を渡す
         />
       </div>
     </>

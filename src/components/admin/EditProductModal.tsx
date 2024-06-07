@@ -2,23 +2,25 @@ import React, { useState } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import { Product } from "../../contexts/ProductContext";
 import { APIパス } from "../common/constants";
-import { useAuth } from "../../contexts/AuthContext"; // AuthContextをインポート
+import { useAuth } from "../../contexts/AuthContext";
 
 // 商品編集モーダル
 interface EditProductModalProps {
   open: boolean;
   onClose: () => void;
+  onUpdated: () => void; // データ更新後に呼び出されるコールバック関数
   productData: Product; // 商品データ
 }
 
 const EditProductModal: React.FC<EditProductModalProps> = ({
   open,
   onClose,
+  onUpdated,
   productData,
 }) => {
   const { token } = useAuth(); // トークンを取得
   const [editedProductData, setEditedProductData] = useState(productData);
-  const [updateSuccess, setUpdateSuccess] = useState(false); // 更新成功のフラグ
+  const [updateSuccess, setUpdateSuccess] = useState<boolean | null>(null); // 更新成功のフラグ
 
   // 保存処理
   const handleSave = async () => {
@@ -28,8 +30,6 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         price: editedProductData.price,
         content: editedProductData.content,
       };
-
-      console.log("updatedProductData", updatedProductData);
 
       const response = await fetch(`${APIパス}/items/${productData.id}`, {
         method: "PUT",
@@ -48,6 +48,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
       setUpdateSuccess(true); // 更新成功のフラグをtrueに設定
     } catch (error) {
       console.error("Error updating product:", error);
+      setUpdateSuccess(false); // 更新成功のフラグをfalseに設定
     }
   };
 
@@ -62,7 +63,8 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 
   // モーダルを閉じるときに updateSuccess をリセット
   const handleClose = () => {
-    setUpdateSuccess(false);
+    setUpdateSuccess(null);
+    onUpdated(); // データ更新後にコールバックを呼び出す
     onClose();
   };
 
@@ -86,9 +88,11 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         }}
       >
         <Typography id="modal-modal-title" variant="h6" component="h2">
-          {updateSuccess ? "商品情報の更新が成功しました" : "商品を編集"}
+          {updateSuccess === true && "商品情報の更新が成功しました"}
+          {updateSuccess === false && "商品情報の更新が失敗しました"}
+          {updateSuccess === null && "商品を編集"}
         </Typography>
-        {!updateSuccess && (
+        {updateSuccess === null && (
           <>
             <TextField
               fullWidth
@@ -118,7 +122,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
           </>
         )}
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-          {!updateSuccess ? (
+          {updateSuccess === null ? (
             <>
               <Button variant="contained" onClick={handleSave}>
                 保存

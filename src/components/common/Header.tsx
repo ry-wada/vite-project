@@ -11,6 +11,7 @@ import Badge from "@mui/material/Badge";
 import { Button } from "@mui/material";
 import { useAuth } from "../../contexts/AuthContext";
 import { CartContext } from "../../contexts/CartContext";
+import { Person } from "@mui/icons-material";
 
 export const UserHeader: React.FC = () => {
   const { isLoggedIn, logout } = useAuth();
@@ -24,7 +25,7 @@ export const UserHeader: React.FC = () => {
 
   const handleLogout = () => {
     setAnchorEl(null);
-    logout(false);
+    logout(false); // ログアウト処理 ユーザー側はfalse
   };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -55,7 +56,7 @@ export const UserHeader: React.FC = () => {
             </Badge>
           </IconButton>
           <Button onClick={handleClick} color="inherit">
-            Info
+            <Person></Person>
           </Button>
           <Popover
             open={Boolean(anchorEl)}
@@ -70,14 +71,12 @@ export const UserHeader: React.FC = () => {
               horizontal: "center",
             }}
           >
+            <MenuItem component={Link} to="/myPage" onClick={handleClose}>
+              マイページ
+            </MenuItem>
             {isLoggedIn ? (
               <>
-                <MenuItem component={Link} to="/myPage" onClick={handleClose}>
-                  マイページ
-                </MenuItem>
-                <MenuItem component={Link} to="/" onClick={handleLogout}>
-                  ログアウト
-                </MenuItem>
+                <MenuItem onClick={handleLogout}>ログアウト</MenuItem>
               </>
             ) : (
               <MenuItem component={Link} to="/userLogin" onClick={handleClose}>

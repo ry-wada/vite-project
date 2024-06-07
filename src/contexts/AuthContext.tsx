@@ -152,7 +152,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       // ログイン失敗時の処理
       console.error("Login error:", error);
-      alert("ログインに失敗しました。");
+      alert("メールアドレスかパスワードが違います。");
     }
   };
 
@@ -176,6 +176,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoggedIn(false);
       setUser(null); // ユーザー情報を削除する
       setToken(""); // トークンを削除する
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
       alert("ログアウトしました。");
 
       switch (admin) {
@@ -183,7 +184,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           navigate("/admin");
           break;
         case false:
-          navigate("/");
+          navigate("/userLogin");
           break;
       }
     } catch (error) {

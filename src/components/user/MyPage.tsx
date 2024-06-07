@@ -18,23 +18,33 @@ const MyPage: React.FC = () => {
           <Grid item xs={12} sm={6}>
             <Card>
               <CardContent>
-                <Typography variant="h5" gutterBottom align="center">
-                  名前:
-                </Typography>
-                <Typography variant="body1" align="center">
-                  山田花子{/* DBにないのでとりあえず */}
-                </Typography>
-                <Typography
-                  variant="h5"
-                  gutterBottom
-                  align="center"
-                  style={{ marginTop: "20px" }}
-                >
-                  メールアドレス:
-                </Typography>
-                <Typography variant="body1" align="center">
-                  {user?.email} {/* メールアドレスを表示 */}
-                </Typography>
+                {user ? (
+                  <>
+                    <Typography variant="h5" gutterBottom align="center">
+                      名前:
+                    </Typography>
+                    <Typography variant="body1" align="center">
+                      山田花子{/* DBにないのでとりあえず */}
+                    </Typography>
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      align="center"
+                      style={{ marginTop: "20px" }}
+                    >
+                      メールアドレス:
+                    </Typography>
+                    <Typography variant="body1" align="center">
+                      {user.email} {/* メールアドレスを表示 */}
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <Typography variant="h5" gutterBottom align="center">
+                      ログインしてください。
+                    </Typography>
+                  </>
+                )}
               </CardContent>
             </Card>
           </Grid>

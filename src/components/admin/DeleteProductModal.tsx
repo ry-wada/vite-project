@@ -2,21 +2,23 @@ import React, { useState } from "react";
 import { Modal, Box, Typography, Button } from "@mui/material";
 import { APIパス } from "../common/constants";
 import { useAuth } from "../../contexts/AuthContext"; // AuthContextをインポート
+import { useNavigate } from "react-router-dom";
 
 // 削除確認モーダル
 interface DeleteConfirmationModalProps {
   open: boolean;
   onClose: () => void;
-  productId: string; // 削除する商品のID
+  productId: number;
 }
 
-const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
+const DeleteProductModal: React.FC<DeleteConfirmationModalProps> = ({
   open,
   onClose,
   productId,
 }) => {
   const { token } = useAuth(); // トークンを取得
   const [deleted, setDeleted] = useState(false);
+  const navigate = useNavigate();
 
   // 削除処理
   const handleDelete = async () => {
@@ -44,6 +46,7 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   const handleClose = () => {
     if (deleted) {
       onClose();
+      navigate("/adminHome");
     } else {
       setDeleted(false);
       onClose();
@@ -74,8 +77,7 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
           {!deleted && (
-            // とりあえず閉じるだけ
-            <Button variant="contained" color="error" onClick={handleClose}>
+            <Button variant="contained" color="error" onClick={handleDelete}>
               削除する
             </Button>
           )}
@@ -88,4 +90,4 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   );
 };
 
-export default DeleteConfirmationModal;
+export default DeleteProductModal;

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Grid, CardContent, Typography } from "@mui/material";
 import { ProductContext } from "../../contexts/ProductContext";
 import { LoadMoreButton, ProductCardContainer } from "../../styles";
@@ -7,11 +7,18 @@ import { AdminHeader } from "../common/Header";
 import { APIパス, 初期表示数, 追加表示数 } from "../common/constants";
 
 const AdminHome: React.FC = () => {
+  const navigate = useNavigate();
   const { products, setProducts } = useContext(ProductContext);
-  const [visibleProducts, setVisibleProducts] = useState(初期表示数);
   const [page, setPage] = useState(1);
 
+  const auth = localStorage.getItem("auth");
+
   useEffect(() => {
+    // ログインしていない場合は/adminにリダイレクト
+    if (!auth) {
+      navigate("/admin");
+    }
+
     const fetchProducts = async () => {
       try {
         const response = await fetch(
@@ -27,7 +34,7 @@ const AdminHome: React.FC = () => {
       }
     };
     fetchProducts();
-  }, [setProducts]);
+  }, [setProducts, auth, navigate]);
 
   const showMoreProducts = async () => {
     try {
@@ -41,7 +48,6 @@ const AdminHome: React.FC = () => {
       const data = await response.json();
       setProducts((prevProducts) => [...prevProducts, ...data.data]);
       setPage(nextPage);
-      setVisibleProducts((prevCount) => prevCount + 追加表示数);
     } catch (error) {
       console.error("Error fetching more products:", error);
     }
@@ -64,7 +70,7 @@ const AdminHome: React.FC = () => {
           </Grid>
         </Grid>
         <Grid container justifyContent="center">
-          {products.slice(0, visibleProducts).map((product) => (
+          {products.map((product) => (
             <Grid item key={product.id} xs={12} style={{ marginBottom: 20 }}>
               <Link
                 to={`/adminProductDetail/${product.id}`}
@@ -95,11 +101,9 @@ const AdminHome: React.FC = () => {
             </Grid>
           ))}
         </Grid>
-        {visibleProducts < products.length && (
-          <LoadMoreButton variant="contained" onClick={showMoreProducts}>
-            もっと表示
-          </LoadMoreButton>
-        )}
+        <LoadMoreButton variant="contained" onClick={showMoreProducts}>
+          もっと表示
+        </LoadMoreButton>
       </div>
     </>
   );

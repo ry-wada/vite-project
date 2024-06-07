@@ -6,10 +6,24 @@ const AdminLogin: React.FC = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   // ログインボタンがクリックされたときの処理
-  const handleLogin = () => {
-    login(email, password, true);
+  const handleLogin = async () => {
+    if (email === "") {
+      setEmailError(true);
+    } else {
+      setEmailError(false);
+    }
+    if (password === "") {
+      setPasswordError(true);
+    } else {
+      setPasswordError(false);
+    }
+    if (email !== "" && password !== "") {
+      login(email, password, true);
+    }
   };
 
   return (
@@ -29,6 +43,9 @@ const AdminLogin: React.FC = () => {
           onChange={(e) => setEmail(e.target.value)}
           fullWidth
           margin="normal"
+          required
+          error={emailError}
+          helperText={emailError ? "emailを入力してください" : ""}
         />
         <TextField
           label="password"
@@ -37,6 +54,9 @@ const AdminLogin: React.FC = () => {
           onChange={(e) => setPassword(e.target.value)}
           fullWidth
           margin="normal"
+          required
+          error={passwordError}
+          helperText={passwordError ? "パスワードを入力してください" : ""}
         />
         <Button variant="contained" color="primary" onClick={handleLogin}>
           ログイン

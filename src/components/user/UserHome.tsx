@@ -21,7 +21,6 @@ import {
 
 const UserHome: React.FC = () => {
   const { products, setProducts } = useContext(ProductContext);
-  const [visibleProducts, setVisibleProducts] = useState(初期表示数);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -46,9 +45,8 @@ const UserHome: React.FC = () => {
   const showMoreProducts = async () => {
     try {
       const nextPage = page + 1;
-      const moreProducts = 初期表示数 + 追加表示数 * nextPage;
       const response = await fetch(
-        `${APIパス}/items?limit=${moreProducts}&page=${nextPage}`
+        `${APIパス}/items?limit=${追加表示数}&page=${nextPage}`
       );
 
       if (!response.ok) {
@@ -57,7 +55,6 @@ const UserHome: React.FC = () => {
       const data = await response.json();
       setProducts([...products, ...data.data]);
       setPage(nextPage);
-      setVisibleProducts((prevCount) => prevCount + 追加表示数);
     } catch (error) {
       console.error("Error fetching more products:", error);
     }
@@ -99,11 +96,9 @@ const UserHome: React.FC = () => {
             </Grid>
           ))}
         </Grid>
-        {visibleProducts < products.length && (
-          <LoadMoreButton variant="contained" onClick={showMoreProducts}>
-            もっと表示
-          </LoadMoreButton>
-        )}
+        <LoadMoreButton variant="contained" onClick={showMoreProducts}>
+          もっと表示
+        </LoadMoreButton>
       </Container>
       <UserFooter />
     </>
