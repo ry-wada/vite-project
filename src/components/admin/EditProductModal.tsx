@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import { Product } from "../../contexts/ProductContext";
-import { APIパス } from "../common/constants";
 import { useAuth } from "../../contexts/AuthContext";
+import { updateProduct } from "../../features/api";
 
 // 商品編集モーダル
 interface EditProductModalProps {
@@ -24,32 +24,8 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
 
   // 保存処理
   const handleSave = async () => {
-    try {
-      const updatedProductData = {
-        name: editedProductData.name,
-        price: editedProductData.price,
-        content: editedProductData.content,
-      };
-
-      const response = await fetch(`${APIパス}/items/${productData.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          accept: "application/json",
-          Authorization: `Bearer ${token}`, // トークンを追加
-        },
-        body: JSON.stringify(updatedProductData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update product");
-      }
-
-      setUpdateSuccess(true); // 更新成功のフラグをtrueに設定
-    } catch (error) {
-      console.error("Error updating product:", error);
-      setUpdateSuccess(false); // 更新成功のフラグをfalseに設定
-    }
+    const success = await updateProduct(editedProductData, token);
+    setUpdateSuccess(success); // 更新成功のフラグを設定
   };
 
   // フォームの入力値を更新する関数

@@ -5,14 +5,13 @@ import { AuthProvider } from "./contexts/AuthContext";
 import MyPage from "./components/user/MyPage";
 import UserHome from "./components/user/UserHome";
 import MyCart from "./components/user/MyCart";
-import UserLogin from "./components/user/UserLogin";
 import ProductDetail from "./components/user/ProductDetail";
-import AdminLogin from "./components/admin/AdminLogin";
 import AdminHome from "./components/admin/AdminHome";
 import AdminProductDetail from "./components/admin/AdminProductDetail";
 import AdminAddProduct from "./components/admin/AdminAddProduct";
 import NotFoundPage from "./components/common/NotFoundPage";
 import { CartProvider } from "./contexts/CartContext";
+import Login from "./components/common/Login";
 
 function App() {
   return (
@@ -21,15 +20,18 @@ function App() {
         <ProductProvider>
           <CartProvider>
             <Routes>
+              {/* 共通のルート */}
+              <Route path="/login" element={<Login />} />
+
               {/* ユーザー側のルート */}
               <Route path="/" element={<UserHome />} />
               <Route path="/productDetail/:id" element={<ProductDetail />} />
-              <Route path="/userLogin" element={<UserLogin />} />
+              {/* <Route path="/" element={<UserLogin />} /> */}
               <Route path="/myPage" element={<MyPage />} />
               <Route path="/myCart" element={<MyCart />} />
 
               {/* 管理者側のルート */}
-              <Route path="/admin" element={<AdminLogin />} />
+              {/* <Route path="/admin" element={<AdminLogin />} /> */}
               <Route path="/adminHome" element={<AdminHome />} />
               <Route
                 path="/adminProductDetail/:id"

@@ -4,7 +4,8 @@ import { Button, Grid, CardContent, Typography } from "@mui/material";
 import { ProductContext } from "../../contexts/ProductContext";
 import { LoadMoreButton, ProductCardContainer } from "../../styles";
 import { AdminHeader } from "../common/Header";
-import { APIパス, 初期表示数, 追加表示数 } from "../common/constants";
+import { fetchProducts } from "../../features/api";
+import { 初期表示数, 追加表示数 } from "../../lib/constants";
 
 const AdminHome: React.FC = () => {
   const navigate = useNavigate();
@@ -19,34 +20,22 @@ const AdminHome: React.FC = () => {
       navigate("/admin");
     }
 
-    const fetchProducts = async () => {
+    const loadInitialProducts = async () => {
       try {
-        const response = await fetch(
-          `${APIパス}/items?limit=${初期表示数}&page=1`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
-        }
-        const data = await response.json();
-        setProducts(data.data);
+        const initialProducts = await fetchProducts(初期表示数, 1);
+        setProducts(initialProducts);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching initial products:", error);
       }
     };
-    fetchProducts();
+    loadInitialProducts();
   }, [setProducts, auth, navigate]);
 
   const showMoreProducts = async () => {
     try {
       const nextPage = page + 1;
-      const response = await fetch(
-        `${APIパス}/items?limit=${追加表示数}&page=${nextPage}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch more products");
-      }
-      const data = await response.json();
-      setProducts((prevProducts) => [...prevProducts, ...data.data]);
+      const moreProducts = await fetchProducts(追加表示数, nextPage);
+      setProducts((prevProducts) => [...prevProducts, ...moreProducts]);
       setPage(nextPage);
     } catch (error) {
       console.error("Error fetching more products:", error);

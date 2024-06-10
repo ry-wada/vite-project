@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Modal, Box, Typography, Button } from "@mui/material";
-import { APIパス } from "../common/constants";
 import { useAuth } from "../../contexts/AuthContext"; // AuthContextをインポート
 import { useNavigate } from "react-router-dom";
+import { deleteProduct } from "../../features/api";
 
 // 削除確認モーダル
 interface DeleteConfirmationModalProps {
@@ -22,24 +22,8 @@ const DeleteProductModal: React.FC<DeleteConfirmationModalProps> = ({
 
   // 削除処理
   const handleDelete = async () => {
-    try {
-      const response = await fetch(`${APIパス}/items/${productId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          accept: "application/json",
-          Authorization: `Bearer ${token}`, // トークンを追加
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete product");
-      }
-
-      setDeleted(true);
-    } catch (error) {
-      console.error("Error deleting product:", error);
-    }
+    const success = await deleteProduct(productId, token);
+    setDeleted(success); // 削除成功のフラグを設定
   };
 
   // モーダルを閉じる処理

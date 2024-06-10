@@ -79,7 +79,11 @@ export const UserHeader: React.FC = () => {
                 <MenuItem onClick={handleLogout}>ログアウト</MenuItem>
               </>
             ) : (
-              <MenuItem component={Link} to="/userLogin" onClick={handleClose}>
+              <MenuItem
+                component={Link}
+                to="/login?isAdmin=false"
+                onClick={handleClose}
+              >
                 ログイン
               </MenuItem>
             )}

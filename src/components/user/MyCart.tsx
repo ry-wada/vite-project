@@ -11,7 +11,7 @@ import UserFooter from "../common/Footer";
 import { UserHeader } from "../common/Header";
 import { CartContext } from "../../contexts/CartContext";
 import { BodyText, HeaderSpace, ProductImage } from "../../styles";
-import { IMAGEパス } from "../common/constants";
+import { IMAGEパス } from "../../lib/config";
 
 const MyCart: React.FC = () => {
   const { cartItems, removeFromCart } = useContext(CartContext);

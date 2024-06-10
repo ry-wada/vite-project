@@ -6,28 +6,26 @@ import UserFooter from "../common/Footer";
 import { UserHeader } from "../common/Header";
 import { CartContext } from "../../contexts/CartContext";
 import { Product } from "../../contexts/ProductContext";
-import { APIパス, IMAGEパス } from "../common/constants";
+import { fetchProductDetail } from "../../features/api";
+import { IMAGEパス } from "../../lib/config";
 
 const ProductDetail: React.FC = () => {
   const { id = "" } = useParams<{ id?: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const { addToCart } = useContext(CartContext);
 
+  //useeffectいるか調査
   useEffect(() => {
-    const fetchProductDetail = async () => {
+    const loadInitialProducts = async () => {
       try {
-        const response = await fetch(`${APIパス}/items/${id}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch product details");
-        }
-        const data = await response.json();
-        setProduct(data);
+        const initialProducts = await fetchProductDetail(id);
+        setProduct(initialProducts);
       } catch (error) {
-        console.error("Error fetching product details:", error);
+        console.error("Error loading initial products:", error);
       }
     };
-    fetchProductDetail();
-  }, [id]);
+    loadInitialProducts();
+  }, [id, setProduct]);
 
   if (!product) {
     return (

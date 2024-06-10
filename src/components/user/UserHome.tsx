@@ -12,48 +12,31 @@ import {
 } from "../../styles";
 import UserFooter from "../common/Footer";
 import { UserHeader } from "../common/Header";
-import {
-  APIパス,
-  IMAGEパス,
-  初期表示数,
-  追加表示数,
-} from "../common/constants";
+import { fetchProducts } from "../../features/api";
+import { 初期表示数, 追加表示数 } from "../../lib/constants";
+import { IMAGEパス } from "../../lib/config";
 
 const UserHome: React.FC = () => {
   const { products, setProducts } = useContext(ProductContext);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const loadInitialProducts = async () => {
       try {
-        const response = await fetch(
-          `${APIパス}/items?limit=${初期表示数}&page=1`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
-        }
-        const data = await response.json();
-
-        setProducts(data.data);
+        const initialProducts = await fetchProducts(初期表示数, 1);
+        setProducts(initialProducts);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error loading initial products:", error);
       }
     };
-    fetchProducts();
+    loadInitialProducts();
   }, [setProducts]);
 
   const showMoreProducts = async () => {
     try {
       const nextPage = page + 1;
-      const response = await fetch(
-        `${APIパス}/items?limit=${追加表示数}&page=${nextPage}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch more products");
-      }
-      const data = await response.json();
-      setProducts([...products, ...data.data]);
+      const moreProducts = await fetchProducts(追加表示数, nextPage);
+      setProducts([...products, ...moreProducts]);
       setPage(nextPage);
     } catch (error) {
       console.error("Error fetching more products:", error);

@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { APIパス } from "../components/common/constants";
+import { APIパス } from "../lib/config";
 
 // ユーザー情報のスキーマ定義（仮）
 const UserSchema = z.object({
@@ -181,10 +181,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       switch (admin) {
         case true:
-          navigate("/admin");
+          navigate("/login?isAdmin=true");
           break;
         case false:
-          navigate("/userLogin");
+          navigate("/login?isAdmin=false");
           break;
       }
     } catch (error) {
