@@ -1,14 +1,13 @@
-import { Typography } from "@mui/material";
+import { CustomTypography } from "../../features/components";
 
 const NotFoundPage = () => {
   return (
     <div>
-      <Typography variant="h1" component="h1" gutterBottom>
-        404 Not Found
-      </Typography>
-      <Typography variant="body1">
-        お探しのページは見つかりませんでした。
-      </Typography>
+      <CustomTypography variant="h4" text="404 Not Found" />
+      <CustomTypography
+        variant="body1"
+        text="お探しのページは見つかりませんでした。"
+      />
     </div>
   );
 };

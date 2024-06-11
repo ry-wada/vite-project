@@ -24,10 +24,6 @@ export const ProductListHeading = styled(Typography)(({ theme }) => ({
   textAlign: "left",
 }));
 
-export const LoadMoreButton = styled(Button)({
-  margin: "20px 0",
-});
-
 export const ProductCard = styled(Card)({
   maxWidth: 400,
   margin: "auto",
@@ -49,3 +45,14 @@ export const HeaderSpace = styled("div")({
   maxHeight: "calc(100vh - 40px)",
   overflowY: "auto",
 });
+
+export const BoxContainer = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+};

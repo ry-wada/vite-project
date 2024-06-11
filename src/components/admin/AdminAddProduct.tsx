@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Typography, Grid, TextField } from "@mui/material";
+import { Typography, Grid } from "@mui/material";
 import { AdminHeader } from "../common/Header";
 import { useAuth } from "../../contexts/AuthContext";
 import AddProductModal from "./AddProductModal";
 import { useNavigate } from "react-router-dom";
 import { createProduct } from "../../features/api";
+import { CustomButton, CustomTextField } from "../../features/components";
 
 const AdminAddProduct: React.FC = () => {
   const [productName, setProductName] = useState("");
@@ -67,41 +68,29 @@ const AdminAddProduct: React.FC = () => {
         <Typography variant="h4">商品新規登録</Typography>
         <Grid container justifyContent="center" style={{ marginTop: 20 }}>
           <Grid item xs={12} sm={8} md={6}>
-            <TextField
-              fullWidth
+            <CustomTextField
               label="商品名"
               value={productName}
               onChange={handleProductNameChange}
-              variant="outlined"
-              margin="normal"
+              error={false}
+              helperText=""
             />
-            <TextField
-              fullWidth
+            <CustomTextField
               label="金額"
               value={price}
               onChange={handlePriceChange}
-              variant="outlined"
-              margin="normal"
+              error={false}
+              helperText=""
             />
-            <TextField
-              fullWidth
+            <CustomTextField
               label="説明"
               value={description}
               onChange={handleDescriptionChange}
-              variant="outlined"
-              margin="normal"
-              multiline
-              rows={4}
+              error={false}
+              helperText=""
             />
             {error && <Typography color="error">{error}</Typography>}
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSave}
-              style={{ marginTop: 20 }}
-            >
-              商品新規登録
-            </Button>
+            <CustomButton onClick={handleSave} label="商品新規登録" />
           </Grid>
         </Grid>
         <AddProductModal

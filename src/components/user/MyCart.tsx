@@ -1,17 +1,11 @@
 import React, { useContext } from "react";
-import {
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-  Button,
-} from "@mui/material";
+import { Container, Card, CardContent, Grid } from "@mui/material";
 import UserFooter from "../common/Footer";
 import { UserHeader } from "../common/Header";
 import { CartContext } from "../../contexts/CartContext";
 import { BodyText, HeaderSpace, ProductImage } from "../../styles";
 import { IMAGEパス } from "../../lib/config";
+import { CustomButton, CustomTypography } from "../../features/components";
 
 const MyCart: React.FC = () => {
   const { cartItems, removeFromCart } = useContext(CartContext);
@@ -28,19 +22,14 @@ const MyCart: React.FC = () => {
       <Container style={{ marginBottom: "120px" }}>
         <BodyText>カート一覧</BodyText>
         {cartItems.length === 0 ? (
-          <Typography variant="h5" gutterBottom align="center">
-            カートに商品がありません。
-          </Typography>
+          <CustomTypography variant="h5" text="カートに商品がありません。" />
         ) : (
           <>
-            <Grid
-              container
-              justifyContent="flex-end"
-              style={{ marginTop: "20px" }}
-            >
-              <Typography variant="h6">
-                合計金額: {calculateTotalPrice()}円
-              </Typography>
+            <Grid container justifyContent="flex-end">
+              <CustomTypography
+                variant="h6"
+                text={`合計金額: ${calculateTotalPrice()}円`}
+              />
             </Grid>
             {cartItems.map((item, index) => (
               <Card key={index} style={{ marginBottom: "20px" }}>
@@ -51,21 +40,18 @@ const MyCart: React.FC = () => {
                         src={`${IMAGEパス}${item.id}.jpg`}
                         alt={item.name}
                       />
-                      <Typography variant="h5" gutterBottom>
-                        {item.name}
-                      </Typography>
-                      <Typography variant="body1">
-                        金額: {item.price}円
-                      </Typography>
+                      <CustomTypography variant="h5" text={item.name} />
+                      <CustomTypography
+                        variant="body1"
+                        text={`金額: ${item.price}円`}
+                      />
                     </Grid>
                     <Grid item xs={6} container justifyContent="flex-end">
-                      <Button
-                        variant="contained"
-                        color="error"
+                      <CustomButton
                         onClick={() => removeFromCart(item.id)}
-                      >
-                        削除する
-                      </Button>
+                        label="削除する"
+                        color="error"
+                      ></CustomButton>
                     </Grid>
                   </Grid>
                 </CardContent>

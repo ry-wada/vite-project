@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Typography, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { useAuth } from "../../contexts/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import {
+  CustomButton,
+  CustomTextField,
+  CustomTypography,
+} from "../../features/components";
 
 const Login: React.FC = () => {
   const { login } = useAuth();
@@ -47,43 +52,34 @@ const Login: React.FC = () => {
       style={{ minHeight: "100vh" }}
     >
       <div>
-        <Typography variant="h5" gutterBottom>
-          {isAdmin ? "管理者ログイン" : "ユーザーログイン"}
-        </Typography>
-        <TextField
+        <CustomTypography
+          variant="h5"
+          text={isAdmin ? "管理者ログイン" : "ユーザーログイン"}
+        />
+        <CustomTextField
           label="e-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          fullWidth
-          margin="normal"
-          required
           error={emailError}
           helperText={emailError ? "emailを入力してください" : ""}
         />
-        <TextField
+        <CustomTextField
           label="password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          fullWidth
-          margin="normal"
-          required
           error={passwordError}
           helperText={passwordError ? "パスワードを入力してください" : ""}
         />
-        <Button variant="contained" color="primary" onClick={handleLogin}>
-          ログイン
-        </Button>
+        <br></br>
+        <CustomButton onClick={handleLogin} label="ログイン" />
         <br></br>
         {!isAdmin && (
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={handleAdminLoginRedirect}
-            style={{ marginTop: "10px" }}
-          >
-            管理者としてログイン
-          </Button>
+          <CustomButton
+            onClick={() => handleAdminLoginRedirect()}
+            label="管理者としてログイン"
+            color="warning"
+          />
         )}
       </div>
     </Grid>

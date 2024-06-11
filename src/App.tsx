@@ -26,12 +26,10 @@ function App() {
               {/* ユーザー側のルート */}
               <Route path="/" element={<UserHome />} />
               <Route path="/productDetail/:id" element={<ProductDetail />} />
-              {/* <Route path="/" element={<UserLogin />} /> */}
               <Route path="/myPage" element={<MyPage />} />
               <Route path="/myCart" element={<MyCart />} />
 
               {/* 管理者側のルート */}
-              {/* <Route path="/admin" element={<AdminLogin />} /> */}
               <Route path="/adminHome" element={<AdminHome />} />
               <Route
                 path="/adminProductDetail/:id"

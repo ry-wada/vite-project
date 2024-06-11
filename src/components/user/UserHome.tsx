@@ -1,47 +1,28 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { Grid, CardContent, Typography, Container } from "@mui/material";
+import { Grid, CardContent, Container } from "@mui/material";
 import { ProductContext } from "../../contexts/ProductContext";
 import {
   ProductListHeading,
   ProductCardContainer,
-  LoadMoreButton,
   HeaderSpace,
   BodyText,
   ProductImage,
 } from "../../styles";
 import UserFooter from "../common/Footer";
 import { UserHeader } from "../common/Header";
-import { fetchProducts } from "../../features/api";
-import { 初期表示数, 追加表示数 } from "../../lib/constants";
 import { IMAGEパス } from "../../lib/config";
+import { CustomButton, CustomTypography } from "../../features/components";
+import { useProducts } from "../../lib/hooks";
 
 const UserHome: React.FC = () => {
-  const { products, setProducts } = useContext(ProductContext);
-  const [page, setPage] = useState(1);
+  const { setProducts } = useContext(ProductContext);
+  const { products, showMoreProducts } = useProducts();
 
-  useEffect(() => {
-    const loadInitialProducts = async () => {
-      try {
-        const initialProducts = await fetchProducts(初期表示数, 1);
-        setProducts(initialProducts);
-      } catch (error) {
-        console.error("Error loading initial products:", error);
-      }
-    };
-    loadInitialProducts();
-  }, [setProducts]);
-
-  const showMoreProducts = async () => {
-    try {
-      const nextPage = page + 1;
-      const moreProducts = await fetchProducts(追加表示数, nextPage);
-      setProducts([...products, ...moreProducts]);
-      setPage(nextPage);
-    } catch (error) {
-      console.error("Error fetching more products:", error);
-    }
-  };
+  // カスタムフックの中で products が更新されるたびに、ProductContext の products を更新
+  React.useEffect(() => {
+    setProducts(products);
+  }, [products, setProducts]);
 
   return (
     <>
@@ -63,25 +44,21 @@ const UserHome: React.FC = () => {
                     alt={product.name}
                   />
                   <CardContent style={{ textAlign: "center" }}>
-                    <Typography variant="h6" component="h2">
-                      {product.name}
-                    </Typography>
-                    <Typography
+                    <CustomTypography
+                      variant="h6"
+                      text={product.name}
+                    ></CustomTypography>
+                    <CustomTypography
                       variant="subtitle1"
-                      color="textSecondary"
-                      component="p"
-                    >
-                      価格: {product.price} 円
-                    </Typography>
+                      text={`価格: ${product.price} 円`}
+                    ></CustomTypography>
                   </CardContent>
                 </ProductCardContainer>
               </Link>
             </Grid>
           ))}
         </Grid>
-        <LoadMoreButton variant="contained" onClick={showMoreProducts}>
-          もっと表示
-        </LoadMoreButton>
+        <CustomButton onClick={showMoreProducts} label="もっと表示" />
       </Container>
       <UserFooter />
     </>

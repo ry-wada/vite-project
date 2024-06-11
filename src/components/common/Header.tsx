@@ -12,6 +12,7 @@ import { Button } from "@mui/material";
 import { useAuth } from "../../contexts/AuthContext";
 import { CartContext } from "../../contexts/CartContext";
 import { Person } from "@mui/icons-material";
+import { CustomButton, CustomTypography } from "../../features/components";
 
 export const UserHeader: React.FC = () => {
   const { isLoggedIn, logout } = useAuth();
@@ -50,8 +51,6 @@ export const UserHeader: React.FC = () => {
         <div>
           <IconButton color="inherit" onClick={handleCart}>
             <Badge badgeContent={cartItems.length} color="error">
-              {" "}
-              {/* カート内の商品数をバッジに表示 */}
               <ShoppingCartIcon />
             </Badge>
           </IconButton>
@@ -113,17 +112,15 @@ export const AdminHeader: React.FC = () => {
           管理画面
         </Typography>
         <div>
-          <>
-            <Typography
-              variant="body1"
-              style={{ marginRight: 10, color: "white" }}
-            >
-              山田花子 さん {/* DBにないのでとりあえず */}
-            </Typography>
-            <Button color="inherit" onClick={handleLogout}>
-              ログアウト
-            </Button>
-          </>
+          <CustomTypography
+            variant="body1"
+            text={"山田花子 さん"}
+          ></CustomTypography>
+          <CustomButton
+            onClick={handleLogout}
+            label="ログアウト"
+            color="info"
+          />
         </div>
       </Toolbar>
     </AppBar>

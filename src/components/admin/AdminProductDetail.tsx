@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Typography, CardContent, Grid, Button } from "@mui/material";
+import { CardContent, Grid } from "@mui/material";
 import { Product } from "../../contexts/ProductContext";
 import { HeaderSpace, ProductCardContainer } from "../../styles";
 import { AdminHeader } from "../common/Header";
 import EditProductModal from "./EditProductModal";
 import DeleteProductModal from "./DeleteProductModal";
 import { fetchProductDetail } from "../../features/api";
+import { CustomButton, CustomTypography } from "../../features/components";
 
 const AdminProductDetail: React.FC = () => {
   const { id = "" } = useParams<{ id?: string }>();
@@ -58,7 +59,10 @@ const AdminProductDetail: React.FC = () => {
     return (
       <>
         <AdminHeader />
-        <Typography variant="h6">商品が見つかりませんでした...</Typography>
+        <CustomTypography
+          variant="h6"
+          text={"商品が見つかりませんでした。"}
+        ></CustomTypography>
       </>
     );
   }
@@ -71,41 +75,27 @@ const AdminProductDetail: React.FC = () => {
         <Grid item xs={12} sm={8} md={6}>
           <ProductCardContainer style={{ margin: "20px" }}>
             <CardContent style={{ textAlign: "center" }}>
-              <Typography variant="h4" component="h1">
-                {product.name}
-              </Typography>
-              <Typography
+              <CustomTypography
+                variant="h4"
+                text={product.name}
+              ></CustomTypography>
+              <CustomTypography
                 variant="subtitle1"
-                color="textSecondary"
-                component="p"
-              >
-                価格: {product.price} 円
-              </Typography>
-              <Typography
+                text={`価格: ${product.price} 円`}
+              ></CustomTypography>
+              <CustomTypography
                 variant="body1"
-                component="p"
-                style={{ margin: "20px" }}
-              >
-                {product.content}
-              </Typography>
+                text={product.content}
+              ></CustomTypography>
             </CardContent>
           </ProductCardContainer>
           <div style={{ textAlign: "right", margin: "20px" }}>
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ marginRight: "10px" }}
-              onClick={handleOpenEditModal}
-            >
-              編集する
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
+            <CustomButton onClick={handleOpenEditModal} label="編集する" />
+            <CustomButton
               onClick={handleOpenDeleteModal}
-            >
-              削除する
-            </Button>
+              label="削除する"
+              color="error"
+            />
           </div>
         </Grid>
       </Grid>

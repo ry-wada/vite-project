@@ -1,5 +1,7 @@
 import React from "react";
-import { Modal, Box, Typography, Button } from "@mui/material";
+import { Modal, Box, Typography } from "@mui/material";
+import { BoxContainer } from "../../styles";
+import { CustomButton } from "../../features/components";
 
 interface AddProductModalProps {
   open: boolean;
@@ -14,32 +16,13 @@ const AddProductModal: React.FC<AddProductModalProps> = ({
 }) => {
   return (
     <Modal open={open} onClose={onClose}>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100vh",
-        }}
-      >
-        <Box
-          sx={{
-            p: 4,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            borderRadius: 1,
-            minWidth: 300,
-          }}
-        >
-          <Typography variant="h6">
-            {isSuccess === true
-              ? "商品の登録に成功しました"
-              : "商品の登録に失敗しました"}
-          </Typography>
-          <Button onClick={onClose} sx={{ mt: 2 }} variant="contained">
-            閉じる
-          </Button>
-        </Box>
+      <Box sx={BoxContainer}>
+        <Typography variant="h6">
+          {isSuccess === true
+            ? "商品の登録に成功しました"
+            : "商品の登録に失敗しました"}
+        </Typography>
+        <CustomButton onClick={onClose} label="閉じる" />
       </Box>
     </Modal>
   );

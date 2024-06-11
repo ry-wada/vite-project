@@ -1,37 +1,27 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { useParams } from "react-router-dom";
-import { Typography, CardContent, Grid, Button } from "@mui/material";
+import { CardContent, Grid } from "@mui/material";
 import { HeaderSpace, ProductCardContainer, ProductImage } from "../../styles";
 import UserFooter from "../common/Footer";
 import { UserHeader } from "../common/Header";
 import { CartContext } from "../../contexts/CartContext";
-import { Product } from "../../contexts/ProductContext";
-import { fetchProductDetail } from "../../features/api";
 import { IMAGEパス } from "../../lib/config";
+import { CustomButton, CustomTypography } from "../../features/components";
+import { useProductDetail } from "../../lib/hooks";
 
 const ProductDetail: React.FC = () => {
   const { id = "" } = useParams<{ id?: string }>();
-  const [product, setProduct] = useState<Product | null>(null);
+  const product = useProductDetail(id); // カスタムフックを利用して商品詳細を取得
   const { addToCart } = useContext(CartContext);
-
-  //useeffectいるか調査
-  useEffect(() => {
-    const loadInitialProducts = async () => {
-      try {
-        const initialProducts = await fetchProductDetail(id);
-        setProduct(initialProducts);
-      } catch (error) {
-        console.error("Error loading initial products:", error);
-      }
-    };
-    loadInitialProducts();
-  }, [id, setProduct]);
 
   if (!product) {
     return (
       <>
         <UserHeader />
-        <Typography variant="h6">商品が見つかりませんでした...</Typography>
+        <CustomTypography
+          variant="h6"
+          text="商品が見つかりませんでした。"
+        ></CustomTypography>
         <UserFooter />
       </>
     );
@@ -49,33 +39,25 @@ const ProductDetail: React.FC = () => {
                 src={`${IMAGEパス}${product.id}.jpg`}
                 alt={product.name}
               />
-              <Typography variant="h4" component="h1">
-                {product.name}
-              </Typography>
-              <Typography
+              <CustomTypography
+                variant="h4"
+                text={product.name}
+              ></CustomTypography>
+              <CustomTypography
                 variant="subtitle1"
-                color="textSecondary"
-                component="p"
-              >
-                価格: {product.price} 円
-              </Typography>
-              <Typography
+                text={`価格: ${product.price} 円`}
+              ></CustomTypography>
+              <CustomTypography
                 variant="body1"
-                component="p"
-                style={{ margin: "20px" }}
-              >
-                {product.content}
-              </Typography>
+                text={product.content}
+              ></CustomTypography>
             </CardContent>
           </ProductCardContainer>
           <div style={{ textAlign: "right", margin: "20px" }}>
-            <Button
-              variant="contained"
-              color="primary"
+            <CustomButton
               onClick={() => addToCart(product)}
-            >
-              カートに追加
-            </Button>
+              label="カートに追加"
+            ></CustomButton>
           </div>
         </Grid>
       </Grid>

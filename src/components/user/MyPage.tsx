@@ -1,9 +1,10 @@
 import React from "react";
-import { Container, Typography, Card, CardContent, Grid } from "@mui/material";
+import { Container, Card, CardContent, Grid } from "@mui/material";
 import UserFooter from "../common/Footer";
 import { UserHeader } from "../common/Header";
 import { BodyText, HeaderSpace } from "../../styles";
 import { useAuth } from "../../contexts/AuthContext";
+import { CustomTypography } from "../../features/components";
 
 const MyPage: React.FC = () => {
   const { user } = useAuth(); // ユーザー情報を取得
@@ -20,29 +21,21 @@ const MyPage: React.FC = () => {
               <CardContent>
                 {user ? (
                   <>
-                    <Typography variant="h5" gutterBottom align="center">
-                      名前:
-                    </Typography>
-                    <Typography variant="body1" align="center">
-                      山田花子{/* DBにないのでとりあえず */}
-                    </Typography>
-                    <Typography
-                      variant="h5"
-                      gutterBottom
-                      align="center"
-                      style={{ marginTop: "20px" }}
-                    >
-                      メールアドレス:
-                    </Typography>
-                    <Typography variant="body1" align="center">
-                      {user.email} {/* メールアドレスを表示 */}
-                    </Typography>
+                    <CustomTypography variant="subtitle1" text="名前:" />
+                    <CustomTypography variant="h5" text="山田花子" />
+                    <br></br>
+                    <CustomTypography
+                      variant="subtitle1"
+                      text="メールアドレス:"
+                    />
+                    <CustomTypography variant="h5" text={user.email} />
                   </>
                 ) : (
                   <>
-                    <Typography variant="h5" gutterBottom align="center">
-                      ログインしてください。
-                    </Typography>
+                    <CustomTypography
+                      variant="h5"
+                      text="ログインしてください。"
+                    />
                   </>
                 )}
               </CardContent>

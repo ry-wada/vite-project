@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Modal, Box, Typography, TextField, Button } from "@mui/material";
+import { Modal, Box, Typography } from "@mui/material";
 import { Product } from "../../contexts/ProductContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { updateProduct } from "../../features/api";
+import { CustomButton, CustomTextField } from "../../features/components";
+import { BoxContainer } from "../../styles";
 
 // 商品編集モーダル
 interface EditProductModalProps {
@@ -51,18 +53,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 400,
-          bgcolor: "background.paper",
-          boxShadow: 24,
-          p: 4,
-        }}
-      >
+      <Box sx={BoxContainer}>
         <Typography id="modal-modal-title" variant="h6" component="h2">
           {updateSuccess === true && "商品情報の更新が成功しました"}
           {updateSuccess === false && "商品情報の更新が失敗しました"}
@@ -70,47 +61,44 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
         </Typography>
         {updateSuccess === null && (
           <>
-            <TextField
-              fullWidth
+            <CustomTextField
               label="商品名"
+              value={editedProductData.name}
+              onChange={handleChange}
+              error={false}
+              helperText=""
               name="name"
-              defaultValue={editedProductData.name}
-              onChange={handleChange}
-              sx={{ mt: 2 }}
             />
-            <TextField
-              fullWidth
+            <CustomTextField
               label="価格"
+              value={String(editedProductData.price)}
+              onChange={handleChange}
+              error={false}
+              helperText=""
               name="price"
-              type="number"
-              defaultValue={editedProductData.price}
-              onChange={handleChange}
-              sx={{ mt: 2 }}
             />
-            <TextField
-              fullWidth
+            <CustomTextField
               label="説明"
-              name="content"
-              defaultValue={editedProductData.content}
+              value={editedProductData.content}
               onChange={handleChange}
-              sx={{ mt: 2 }}
+              error={false}
+              helperText=""
+              name="content"
             />
           </>
         )}
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
           {updateSuccess === null ? (
             <>
-              <Button variant="contained" onClick={handleSave}>
-                保存
-              </Button>
-              <Button variant="contained" onClick={handleClose} sx={{ ml: 2 }}>
-                キャンセル
-              </Button>
+              <CustomButton onClick={handleSave} label="保存" />
+              <CustomButton
+                onClick={handleClose}
+                label="キャンセル"
+                color="error"
+              />
             </>
           ) : (
-            <Button variant="contained" onClick={handleClose}>
-              閉じる
-            </Button>
+            <CustomButton onClick={handleClose} label="閉じる" />
           )}
         </Box>
       </Box>
